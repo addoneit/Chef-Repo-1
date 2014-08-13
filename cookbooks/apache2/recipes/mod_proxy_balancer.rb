@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Cookbook Name:: apache2
+# Recipe:: mod_proxy_balancer
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
+# Copyright 2014, OneHealth Solutions, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,10 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
+if !platform_family?('freebsd') && node['apache']['version'] == '2.4'
+  include_recipe 'apache2::mod_slotmem_shm'
+end
 
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+apache_module 'proxy_balancer' do
+  conf true
 end

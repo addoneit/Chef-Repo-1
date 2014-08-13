@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Author::  Joshua Timberman (<joshua@opscode.com>)
+# Cookbook Name:: php
+# Libraries:: helpers
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,6 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+def el5_range
+  (0..99).to_a.map { |i| "5.#{i}" }
 end

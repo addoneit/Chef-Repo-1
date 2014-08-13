@@ -1,9 +1,10 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Author::  Joshua Timberman (<joshua@opscode.com>)
+# Author::  Seth Chisamore (<schisamo@opscode.com>)
+# Cookbook Name:: php
+# Recipe:: default
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2009-2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +19,15 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
+include_recipe "php::#{node['php']['install_method']}"
 
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+# update the main channels
+php_pear_channel 'pear.php.net' do
+  action :update
 end
+
+php_pear_channel 'pecl.php.net' do
+  action :update
+end
+
+include_recipe "php::ini"

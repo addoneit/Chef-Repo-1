@@ -1,9 +1,10 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Author::  Joshua Timberman (<joshua@opscode.com>)
+# Author::  Seth Chisamore (<schisamo@opscode.com>)
+# Cookbook Name:: php
+# Recipe:: module_fpdf
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2009-2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +19,17 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+case node['platform_family']
+when 'rhel', 'fedora'
+  pearhub_chan = php_pear_channel 'pearhub.org' do
+    action :discover
+  end
+  php_pear 'FPDF' do
+    channel pearhub_chan.channel_name
+    action :install
+  end
+when 'debian'
+  package 'php-fpdf' do
+    action :install
+  end
 end

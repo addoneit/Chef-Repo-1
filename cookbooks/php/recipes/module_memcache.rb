@@ -1,9 +1,10 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Author::  Joshua Timberman (<joshua@opscode.com>)
+# Author::  Seth Chisamore (<schisamo@opscode.com>)
+# Cookbook Name:: php
+# Recipe:: module_memcache
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2009-2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +19,19 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+case node['platform_family']
+when 'rhel', 'fedora'
+  %w{ zlib-devel }.each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
+  php_pear 'memcache' do
+    action :install
+    # directives(:shm_size => "128M", :enable_cli => 0)
+  end
+when 'debian'
+  package 'php5-memcache' do
+    action :install
+  end
 end

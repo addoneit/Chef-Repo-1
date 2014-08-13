@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Cookbook Name:: apache2
+# Recipe:: jk
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2013, Mike Babineau <michael.babineau@gmail.com>
+# Copyright 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+package 'libapache2-mod-jk' do
+  case node['platform_family']
+  when 'rhel', 'fedora', 'suse'
+    package_name 'mod_jk'
+  else
+    package_name 'libapache2-mod-jk'
+  end
 end
+
+apache_module 'jk'

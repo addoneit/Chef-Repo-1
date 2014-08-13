@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Author::  Christo De Lange (<opscode@dldinternet.com>)
+# Cookbook Name:: php
+# Recipe:: ini
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+template "#{node['php']['conf_dir']}/php.ini" do
+	source node['php']['ini']['template']
+	cookbook node['php']['ini']['cookbook']
+	unless platform?('windows')
+		owner 'root'
+		group 'root'
+		mode '0644'
+	end
+	variables(:directives => node['php']['directives'])
 end

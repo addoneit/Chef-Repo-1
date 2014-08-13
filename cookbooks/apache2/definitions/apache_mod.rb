@@ -1,9 +1,8 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Cookbook Name:: apache2
+# Definition:: apache_mod
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2008-20013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +17,10 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+define :apache_mod do
+  template "#{node['apache']['dir']}/mods-available/#{params[:name]}.conf" do
+    source "mods/#{params[:name]}.conf.erb"
+    mode '0644'
+    notifies :reload, 'service[apache2]', :delayed
+  end
 end

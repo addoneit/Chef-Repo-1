@@ -1,9 +1,7 @@
+# Mysql Cookbook
+# mysql::server_deprecated
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
-#
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2008-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +16,8 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+mysql_service node['mysql']['service_name'] do
+  port node['mysql']['port']
+  data_dir node['mysql']['data_dir']
+  template_source 'deprecated/my.cnf.erb'
 end

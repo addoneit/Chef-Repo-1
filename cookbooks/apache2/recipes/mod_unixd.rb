@@ -1,9 +1,8 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Cookbook Name:: apache2
+# Recipe:: mod_unixd
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2014, OneHealth Solutions, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +17,9 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
-
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+# on platform_family debian this module is staticly linked into apache2
+if node['apache']['version'] == '2.4' && !platform_family?('debian')
+  apache_module 'unixd'
+else
+  log 'Ignoring apache2::mod_unixd. Not available until apache 2.4'
 end

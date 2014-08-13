@@ -1,9 +1,8 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: sql_server
-# Attribute:: default
+# Cookbook Name:: apache2
+# Recipe:: mod_cloudflare
 #
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +17,14 @@
 # limitations under the License.
 #
 
-default['sql_server']['accept_eula'] = true
-default['sql_server']['product_key'] = nil
-default['sql_server']['version'] = '2008R2'
+apt_repository 'cloudflare' do
+  uri 'http://pkg.cloudflare.com'
+  distribution node['lsb']['codename']
+  components ['main']
+  key 'http://pkg.cloudflare.com/pubkey.gpg'
+  action :add
+end
 
-case node['sql_server']['version']
-when '2008R2'
-  default['sql_server']['reg_version'] = 'MSSQL10_50.'
-when '2012'
-  default['sql_server']['reg_version'] = 'MSSQL11.'
+package 'libapache2-mod-cloudflare' do
+  notifies :restart, 'service[apache2]'
 end
