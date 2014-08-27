@@ -1,0 +1,50 @@
+#!/bin/sh
+########################################################################
+# Begin <%= @service_name %>
+#
+# Description : <%= @service_desc %>
+#
+########################################################################
+
+### BEGIN INIT INFO
+# Provides:            <%= @service_name %>
+# Required-Start: $local_fs $remote_fs
+# Required-Stop: $local_fs $remote_fs
+# Default-Start: <% if @run[:daemon] %>2 3 4 5<% end %>
+# Default-Stop: 0 1 6
+# Description: <%= @service_desc %>
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+case "${1}" in
+   start)
+      log_action_begin_msg "Starting..."
+      mkdir --mode=0770 --parents <%= @piddir %>
+      chown <%= @user %>:<%= @group %> <%= @piddir %>
+
+      /sbin/start-stop-daemon --start --chdir "$PWD" --oknodo --chuid <%= @user %>:<%= @group %> --pidfile <%= @pidfile %> --exec <%= @executable %> -- -m scalrpy.<%= @service_module %> -p <%= @pidfile %> -l <%= @logfile %> -c <%= node[:scalr][:core][:configuration] %> -vvv --start <%= @service_extra_args %>
+      ;;
+
+   stop)
+      log_action_begin_msg "Stopping..."
+      killproc -p <%= @pidfile %> <%= @executable %> SIGINT
+      ;;
+
+   restart)
+      ${0} stop
+      sleep 1
+      ${0} start
+      ;;
+
+  status)
+      status_of_proc -p <%= @pidfile %> <%= @executable %> <% @service_name %>
+      ;;
+
+   *)
+      echo "Usage: ${0} {start|stop|restart}"
+      exit 1
+      ;;
+esac
+
+# End scriptname

@@ -1,0 +1,9 @@
+{
+  "name": "base",
+  "run_list": [
+    "recipe[sudo]",
+    "recipe[apt]",
+    "recipe[git]",
+    "recipe[build-essential]"
+  ]
+}

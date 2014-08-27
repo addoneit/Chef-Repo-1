@@ -1,0 +1,101 @@
+scalr:
+  connections:
+    mysql: &connections_mysql
+      host: <%= node[:scalr][:database][:host] %>
+      port: <%= node[:scalr][:database][:port] %>
+      name: <%= node[:scalr][:database][:scalr_dbname] %>
+      user: <%= node[:scalr][:database][:username] %>
+      pass: <%= node[:scalr][:database][:password] %>
+
+  analytics:
+    enabled: yes
+    connections:
+      analytics:
+        <<: *connections_mysql
+        name: <%= node[:scalr][:database][:analytics_dbname] %>
+      scalr:
+        <<: *connections_mysql
+    poller:
+      cryptokey: <%= node[:scalr][:core][:cryptokey_path] %>
+      log_file: '/var/log/scalr.analytics-poller.log'
+      pid_file: '/var/run/scalr.analytics-poller.pid'
+    processing:
+      log_file: '/var/log/scalr.analytics-processing.log'
+      pid_file: '/var/run/scalr.analytics-processing.pid'
+
+  email:
+    address: <%= node[:scalr][:email][:from] %>
+    name: <%= node[:scalr][:email][:name] %>
+
+  auth_mode: scalr
+
+  instances_connection_policy: <%= node[:scalr][:instances_connection_policy] %>
+
+  allowed_clouds:
+  - ec2
+  - gce
+  - eucalyptus
+  - cloudstack
+  - idcf
+  - openstack
+  - ocs
+  - ecs
+  - rackspacenguk
+  - rackspacengus
+  - nebula
+
+  endpoint:
+    scheme: <%= node[:scalr][:endpoint][:scheme] %>
+    host: <%= node[:scalr][:endpoint][:host] %>
+
+  aws:
+    ip_pool: ['<%= node[:scalr][:endpoint][:host_ip] %>/32']
+    security_group_name: scalr.<%= node[:scalr][:endpoint][:host_ip] %>.ip-pool
+
+  billing:
+    enabled: no
+
+  dns:
+    mysql:
+      host: 'localhost'
+      port: ~
+      name: 'scalr'
+      user: 'scalr'
+      pass: 'scalr'
+    static:
+      enabled: no
+      nameservers: ['ns1.example-dns.net', 'ns2.example-dns.net']
+      domain_name: 'example-dns.net'
+    global:
+      enabled: no
+      nameservers: ['ns1.example.net', 'ns2.example.net', 'ns3.example.net', 'ns4.example.net']
+      default_domain_name: 'provide.domain.here.in'
+
+  load_statistics:
+    connections:
+      plotter:
+        scheme: 'http'
+        host: '<%= node[:scalr][:endpoint][:host] %>'
+        port: <%= node[:scalr][:rrd][:port] %>
+        bind_address: '0.0.0.0'
+    rrd:
+      dir: '<%= node[:scalr][:rrd][:rrd_dir] %>'
+      rrdcached_sock_path: '<%= node[:scalr][:rrd][:rrdcached_sock] %>'
+    img:
+      scheme: 'http'
+      host: '<%= node[:scalr][:endpoint][:host] %>'
+      path: '<%= node[:scalr][:rrd][:img_url] %>'
+      dir: '<%= node[:scalr][:rrd][:img_dir] %>'
+
+  scalarizr_update:
+    mode: 'client'
+    default_repo: 'stable'
+    repos:
+      latest:
+        deb_repo_url: 'http://apt.scalr.net/debian scalr/'
+        rpm_repo_url: 'http://rpm.scalr.net/rpm/rhel/$releasever/$basearch'
+        win_repo_url: 'http://win.scalr.net'
+      stable:
+        deb_repo_url: 'http://apt-delayed.scalr.net/debian scalr/'
+        rpm_repo_url: 'http://rpm-delayed.scalr.net/rpm/rhel/$releasever/$basearch'
+        win_repo_url: 'http://win-delayed.scalr.net'
